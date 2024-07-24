@@ -1,4 +1,4 @@
-# snowlib - Simple library managment system
+# Librarby - Simple library managment system
 A library management system for the Snowdin "Librarby", featuring book tracking, due dates and inventory management.
 
 <strong> school project and not an actual libary! </strong> </br> </br>
