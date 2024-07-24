@@ -11,3 +11,5 @@ A library management system for the Snowdin "Librarby", featuring book tracking,
 
 ### Problem/Project Description
 In modern libraries, managing and tracking a vast collection of books and their availability can be challenging without software. This Library Management System addresses this need by providing an intuitive and efficient software solution. It simplifies book cataloging, checkouts, returns, and inventory management, ensuring streamlined operations and user experience, with possibilities for more features
+
+![image](https://github.com/user-attachments/assets/caf880b4-0f26-4206-a4e3-f31ac367999d)
