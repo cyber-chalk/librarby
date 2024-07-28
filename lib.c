@@ -100,7 +100,7 @@ void divide(book *head, book **start, book **end) {
 
   while (current != NULL) {
     current = current->next;
-    if (current != prev) {
+    if (current != NULL) {
       prev = prev->next;
       current = current->next;
     }
@@ -151,15 +151,43 @@ void printList(book *head) {
   }
 }
 
+book *copyList(book *head) {
+  if (head == NULL)
+    return NULL;
+
+  // Allocate memory for the new book node
+  book *newBook = malloc(sizeof(book));
+  if (newBook == NULL) {
+    printf("Memory allocation failed\n");
+    return NULL;
+  }
+
+  // Copy the data from the original node to the new node
+  newBook->popularity = head->popularity;
+  strcpy(newBook->title, head->title);
+  strcpy(newBook->author, head->author);
+  newBook->year = head->year;
+  newBook->returnD = head->returnD;
+  newBook->available = head->available;
+
+  // Recursively copy the rest of the list
+  newBook->next = copyList(head->next);
+
+  return newBook;
+}
+
 int main() {
   book *popularityH = readCSV("./data.csv");
-  book *titleH = mergeSort(popularityH, SORT_BY_TITLE);
-  book *authorH = mergeSort(popularityH, SORT_BY_AUTHOR);
-  book *yearH = mergeSort(popularityH, SORT_BY_YEAR);
-  book *returnH = mergeSort(popularityH, SORT_BY_RETURN_DATE);
-  book *availabilityH = mergeSort(popularityH, SORT_BY_AVAILABILITY);
-  // on front-end disconnection make sure to free
-  // Also! may need to move the code above this to main.c
-  printList(popularityH);
+  book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
+  book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
+  book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
+  book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
+  book *availabilityH = mergeSort(copyList(popularityH), SORT_BY_AVAILABILITY);
+
+  //  on front-end disconnection make sure to free
+  //  Also! may need to move the code above this to main.c
+  printList(titleH);
+  // printList(readCSV("./data.csv"));
+
   return 0;
 }
