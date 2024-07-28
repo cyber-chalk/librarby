@@ -142,6 +142,15 @@ book *mergeSort(book *head, SortBy criteria) {
   return head = sortedMerge(a, b, criteria);
 }
 
+void printList(book *head) {
+  book *current = head;
+  while (current != NULL) {
+    printf("Popularity: %d\n", current->popularity);
+    printf("--------------------------\n");
+    current = current->next;
+  }
+}
+
 int main() {
   book *popularityH = readCSV("./data.csv");
   book *titleH = mergeSort(popularityH, SORT_BY_TITLE);
@@ -150,5 +159,7 @@ int main() {
   book *returnH = mergeSort(popularityH, SORT_BY_RETURN_DATE);
   book *availabilityH = mergeSort(popularityH, SORT_BY_AVAILABILITY);
   // on front-end disconnection make sure to free
+  // Also! may need to move the code above this to main.c
+  printList(popularityH);
   return 0;
 }
