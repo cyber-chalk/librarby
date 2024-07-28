@@ -127,25 +127,24 @@ book *sortedMerge(book *a, book *b, SortBy criteria) {
   return head;
 }
 
-void mergeSort(book *head, SortBy criteria) {
+book *mergeSort(book *head, SortBy criteria) {
   // int size = linkSize(head);
   book *a;
   book *b;
 
-  if ((head == NULL) || (head->next == NULL)) {
-    return;
-  }
+  if ((head == NULL) || (head->next == NULL))
+    return head;
   divide(head, &a, &b);
 
   mergeSort(a, criteria);
   mergeSort(b, criteria);
 
-  head = sortedMerge(a, b, criteria);
+  return head = sortedMerge(a, b, criteria);
 }
 
 int main() {
   book *popularityH = readCSV("./data.csv");
-  book *titleH = mergeSort(*popularityH, SORT_BY_TITLE);
+  book *titleH = mergeSort(popularityH, SORT_BY_TITLE);
   book *authorH = mergeSort(popularityH, SORT_BY_AUTHOR);
   book *yearH = mergeSort(popularityH, SORT_BY_YEAR);
   book *returnH = mergeSort(popularityH, SORT_BY_RETURN_DATE);
