@@ -2,21 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+// #define _XOPEN_SOURCE
+#define _GNU_SOURCE
+#define __USE_XOPEN
+#include <time.h> 
 // merge sort by every way to sort and have that in the heap, so when the user
 // requests it, we will have it ready. When a addition/deletion is made,
 // we will update it in every list in the heap and the csv as well.
 // Concerning searching, we will use a inverted index which is best for
 // keywords.
 
-// Popularity,Title,Author,Year,Return,Available
+// Popularity,Title,Author,Year,Return,
 typedef struct Book {
   struct Book *next;
   int popularity;
   char title[100];
   char author[100];
   int year;
-  int returnD;
-  int available; // either 1 or 0, cant use bool
+  char returnD[100];  
 } book;
 
 typedef enum sorts {
@@ -25,8 +28,23 @@ typedef enum sorts {
   SORT_BY_AUTHOR,
   SORT_BY_YEAR,
   SORT_BY_RETURN_DATE,
-  SORT_BY_AVAILABILITY
+ 
 } SortBy;
+
+int timeCheck(const book* a, const book* b) {
+  struct tm tm1 = {0}, tm2 = {0};
+  time_t t1, t2;
+
+  strptime(a->returnD, "%d-%m-%Y", &tm1);
+  strptime(b->returnD, "%d-%m-%Y", &tm2);
+
+  t1 = mktime(&tm1);
+  t2 = mktime(&tm2);
+
+  double seconds = difftime(t1, t2);
+  return seconds / (60 * 60 * 24);
+
+}
 
 int compareBooks(const book *a, const book *b, SortBy criteria) {
   switch (criteria) {
@@ -39,9 +57,7 @@ int compareBooks(const book *a, const book *b, SortBy criteria) {
   case SORT_BY_YEAR:
     return a->year - b->year;
   case SORT_BY_RETURN_DATE:
-    return a->returnD - b->returnD;
-  case SORT_BY_AVAILABILITY:
-    return a->available - b->available;
+    return timeCheck(a,  b);
   default:
     return 0;
   }
@@ -55,17 +71,16 @@ book *readCSV(const char *filename) {
   }
   char line[256];
   book *current = NULL;
-  book *head;
+  book *head = NULL;
 
   while (fgets(line, sizeof(line), file)) {
     book *newBook = malloc(sizeof(book));
 
-    // - %d: Read an integer (popularity, year, returnD, available)
+    // - %d: Read an integer (popularity,Title, Author, year, returnD)
     // - %99[^,]: Read a string (up to 99 characters or until a comma) (title,
     // author)
-    sscanf(line, "%d,%99[^,],%99[^,],%d,%d,%d", &newBook->popularity,
-           newBook->title, newBook->author, &newBook->year, &newBook->returnD,
-           &newBook->available);
+    sscanf(line, "%d,%99[^,],%99[^,],%d,%99[^,]", &newBook->popularity,
+           newBook->title, newBook->author, &newBook->year, newBook->returnD);
     newBook->next = NULL;
 
     if (current == NULL) {
@@ -167,8 +182,9 @@ book *copyList(book *head) {
   strcpy(newBook->title, head->title);
   strcpy(newBook->author, head->author);
   newBook->year = head->year;
-  newBook->returnD = head->returnD;
-  newBook->available = head->available;
+  strcpy(newBook->returnD, head->returnD);
+  // newBook->returnD = head->returnD;
+
 
   // Recursively copy the rest of the list
   newBook->next = copyList(head->next);
@@ -182,11 +198,10 @@ int main() {
   book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
   book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
   book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
-  book *availabilityH = mergeSort(copyList(popularityH), SORT_BY_AVAILABILITY);
 
   //  on front-end disconnection make sure to free
   //  Also! may need to move the code above this to main.c
-  printList(titleH);
+  printList(returnH);
   // printList(readCSV("./data.csv"));
 
   return 0;
