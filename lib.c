@@ -80,7 +80,7 @@ book *readCSV(const char *filename) {
     // - %99[^,]: Read a string (up to 99 characters or until a comma) (title,
     // author)
     sscanf(line, "%d,%99[^,],%99[^,],%d,%99[^,]", &newBook->popularity,
-           newBook->title, newBook->author, &newBook->year, &newBook->returnD);
+           newBook->title, newBook->author, &newBook->year, newBook->returnD);
     newBook->next = NULL;
 
     if (current == NULL) {
@@ -182,7 +182,8 @@ book *copyList(book *head) {
   strcpy(newBook->title, head->title);
   strcpy(newBook->author, head->author);
   newBook->year = head->year;
-  newBook->returnD = head->returnD;
+  strcpy(newBook->returnD, head->returnD);
+  // newBook->returnD = head->returnD;
 
 
   // Recursively copy the rest of the list
