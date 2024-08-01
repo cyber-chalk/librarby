@@ -19,6 +19,8 @@ typedef struct Book {
   int available; // either 1 or 0, cant use bool
 } book;
 
+//khgsajhg
+
 typedef enum sorts {
   SORT_BY_POPULARITY,
   SORT_BY_TITLE,
