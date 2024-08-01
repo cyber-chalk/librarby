@@ -31,7 +31,7 @@ typedef enum sorts {
  
 } SortBy;
 
-int timeCheck(book* a, book* b) {
+int timeCheck(const book* a, const book* b) {
   struct tm tm1 = {0}, tm2 = {0};
   time_t t1, t2;
 
@@ -71,7 +71,7 @@ book *readCSV(const char *filename) {
   }
   char line[256];
   book *current = NULL;
-  book *head;
+  book *head = NULL;
 
   while (fgets(line, sizeof(line), file)) {
     book *newBook = malloc(sizeof(book));
