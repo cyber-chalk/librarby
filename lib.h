@@ -21,12 +21,23 @@ typedef enum sorts {
     SORT_BY_AVAILABILITY
 } SortBy;
 
+//inverted index function
+typedef struct InvertedIndex {
+    char keyword[100];
+    book *books;
+    struct InvertedIndex *next;
+} InvertedIndex;
+
 int compareBooks(const book *a, const book *b, SortBy criteria);
 book *readCSV(const char *filename);
 int linkSize(book *head);
 void divide(book *head, book **start, book **end);
 book *sortedMerge(book *a, book *b, SortBy criteria);
 book *mergeSort(book *head, SortBy criteria);
-// add functions that you make please
+void printList(book *head);
+book *copyList(book *head);
+InvertedIndex *createInvertedIndex(book *head);
+book *searchInvertedIndex(InvertedIndex *index, const char *keyword);
 
 #endif //LIBRARY_H
+
