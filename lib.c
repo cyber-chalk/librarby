@@ -94,9 +94,9 @@ book *readCSV(const char *filename) {
       current->next = newBook;
       current = newBook;
     }
-    fclose(file);
-    return head;
   }
+  fclose(file);
+  return head;
 }
 
 int linkSize(book *head) {
@@ -261,22 +261,22 @@ int main() {
 
   // On front-end disconnection make sure to free
   // Also! may need to move the code above this to main.c
-  printList(returnH);
+  printList(yearH);
   // printList(readCSV("./data.csv"));
 
   // Create the inverted index
-  InvertedIndex *index = createInvertedIndex(popularityH);
+  // InvertedIndex *index = createInvertedIndex(popularityH);
 
-  char keyword[100];
-  printf("Enter a keyword to search: ");
-  scanf("%99s", keyword);
+  // char keyword[100];
+  // printf("Enter a keyword to search: ");
+  // scanf("%99s", keyword);
 
-  book *result = searchInvertedIndex(index, keyword);
-  if (result != NULL) {
-    printList(result);
-  } else {
-    printf("No results found for keyword: %s\n", keyword);
-  }
+  // book *result = searchInvertedIndex(index, keyword);
+  // if (result != NULL) {
+  //   printList(result);
+  // } else {
+  //   printf("No results found for keyword: %s\n", keyword);
+  // }
 
   return 0;
 }
