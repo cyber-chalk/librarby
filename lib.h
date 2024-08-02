@@ -8,8 +8,8 @@ typedef struct Book {
     char title[100];
     char author[100];
     int year;
-    int returnD;
-    int available; // either 1 or 0, can't use bool
+    char returnD[100];
+ 
 } book;
 
 typedef enum sorts {

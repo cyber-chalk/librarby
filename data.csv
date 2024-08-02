@@ -1,51 +1,60 @@
-Popularity,Title,Author,Year,Return,Available
-102,The Great Gatsby,F. Scott Fitzgerald,1925,0,1
-95,1984,George Orwell,1949,-2,0
-90,To Kill a Mockingbird,Harper Lee,1960,0,1
-85,Moby Dick,Herman Melville,1851,0,1
-80,Pride and Prejudice,Jane Austen,1813,-4,0
-75,The Catcher in the Rye,J.D. Salinger,1951,0,1
-70,Brave New World,Aldous Huxley,1932,-1,0
-68,Crime and Punishment,Fyodor Dostoevsky,1866,0,1
-65,The Hobbit,J.R.R. Tolkien,1937,0,1
-60,War and Peace,Leo Tolstoy,1869,-3,0
-58,Jane Eyre,Charlotte Bronte,1847,0,1
-55,Animal Farm,George Orwell,1945,0,1
-52,The Odyssey,Homer,-800,-5,0
-50,The Iliad,Homer,-750,0,1
-48,Lolita,Vladimir Nabokov,1955,-2,0
-45,Madame Bovary,Gustave Flaubert,1856,0,1
-43,The Divine Comedy,Dante Alighieri,1320,0,1
-40,The Brothers Karamazov,Fyodor Dostoevsky,1880,-6,0
-38,Wuthering Heights,Emily Bronte,1847,0,1
-35,The Count of Monte Cristo,Alexandre Dumas,1844,0,1
-33,A Tale of Two Cities,Charles Dickens,1859,-3,0
-32,Great Expectations,Charles Dickens,1861,0,1
-30,Les Miserables,Victor Hugo,1862,0,1
-28,Ulysses,James Joyce,1922,-2,0
-27,The Scarlet Letter,Nathaniel Hawthorne,1850,0,1
-25,Frankenstein,Mary Shelley,1818,-4,0
-24,Dracula,Bram Stoker,1897,0,1
-22,Gulliver's Travels,Jonathan Swift,1726,0,1
-21,The Three Musketeers,Alexandre Dumas,1844,-3,0
-20,Don Quixote,Miguel de Cervantes,1605,0,1
-18,Fahrenheit 451,Ray Bradbury,1953,-1,0
-17,The Picture of Dorian Gray,Oscar Wilde,1890,0,1
-16,The Grapes of Wrath,John Steinbeck,1939,0,1
-15,The Metamorphosis,Franz Kafka,1915,-2,0
-14,One Hundred Years of Solitude,Gabriel Garcia Marquez,1967,0,1
-13,The Sun Also Rises,Ernest Hemingway,1926,0,1
-12,The Old Man and the Sea,Ernest Hemingway,1952,-3,0
-11,Invisible Man,Ralph Ellison,1952,0,1
-10,Heart of Darkness,Joseph Conrad,1899,0,1
-9,Beloved,Toni Morrison,1987,-5,0
-8,Things Fall Apart,Chinua Achebe,1958,0,1
-7,Slaughterhouse-Five,Kurt Vonnegut,1969,-2,0
-6,The Road,Cormac McCarthy,2006,0,1
-5,To the Lighthouse,Virginia Woolf,1927,0,1
-4,Lord of the Flies,William Golding,1954,-3,0
-3,A Clockwork Orange,Anthony Burgess,1962,0,1
-2,On the Road,Jack Kerouac,1957,-1,0
-1,The Stranger,Albert Camus,1942,0,1
-1,The Trial,Franz Kafka,1925,0,1
-1,The Bell Jar,Sylvia Plath,1963,-2,0
+Popularity,Title,Author,Year,ReturnD
+102,The Great Gatsby,F. Scott Fitzgerald,1925,00-00-0001
+102,The Great Gatsby,F. Scott Fitzgerald,1925,15-08-2024
+95,1984,George Orwell,1949,01-09-2024
+95,1984,George Orwell,1949,15-08-2024
+90,To Kill a Mockingbird,Harper Lee,1960,15-08-2024
+90,To Kill a Mockingbird,Harper Lee,1960,01-09-2024
+85,Moby Dick,Herman Melville,1851,00-00-0001
+85,Moby Dick,Herman Melville,1851,20-08-2024
+80,Pride and Prejudice,Jane Austen,1813,20-07-2024
+80,Pride and Prejudice,Jane Austen,1813,25-08-2024
+75,The Catcher in the Rye,J.D. Salinger,1951,00-00-0001
+75,The Catcher in the Rye,J.D. Salinger,1951,01-09-2024
+70,Brave New World,Aldous Huxley,1932,22-08-2024
+70,Brave New World,Aldous Huxley,1932,01-08-2024
+68,Crime and Punishment,Fyodor Dostoevsky,1866,00-00-0001
+68,Crime and Punishment,Fyodor Dostoevsky,1866,18-08-2024
+65,The Hobbit,J.R.R. Tolkien,1937,00-00-0001
+65,The Hobbit,J.R.R. Tolkien,1937,25-08-2024
+60,War and Peace,Leo Tolstoy,1869,19-08-2024
+58,Jane Eyre,Charlotte Bronte,1847,00-00-0001
+55,Animal Farm,George Orwell,1945,00-00-0001
+52,The Odyssey,Homer,-800,30-07-2024
+50,The Iliad,Homer,-750,00-00-0001
+48,Lolita,Vladimir Nabokov,1955,28-08-2024
+45,Madame Bovary,Gustave Flaubert,1856,00-00-0001
+43,The Divine Comedy,Dante Alighieri,1320,00-00-0001
+40,The Brothers Karamazov,Fyodor Dostoevsky,1880,23-07-2024
+38,Wuthering Heights,Emily Bronte,1847,00-00-0001
+35,The Count of Monte Cristo,Alexandre Dumas,1844,00-00-0001
+33,A Tale of Two Cities,Charles Dickens,1859,25-07-2024
+32,Great Expectations,Charles Dickens,1861,00-00-0001
+30,Les Miserables,Victor Hugo,1862,00-00-0001
+28,Ulysses,James Joyce,1922,28-07-2024
+27,The Scarlet Letter,Nathaniel Hawthorne,1850,00-00-0001
+25,Frankenstein,Mary Shelley,1818,26-07-2024
+24,Dracula,Bram Stoker,1897,00-00-0001
+22,Gulliver's Travels,Jonathan Swift,1726,00-00-0001
+21,The Three Musketeers,Alexandre Dumas,1844,25-07-2024
+20,Don Quixote,Miguel de Cervantes,1605,00-00-0001
+18,Fahrenheit 451,Ray Bradbury,1953,29-07-2024
+17,The Picture of Dorian Gray,Oscar Wilde,1890,00-00-0001
+16,The Grapes of Wrath,John Steinbeck,1939,00-00-0001
+15,The Metamorphosis,Franz Kafka,1915,28-07-2024
+14,One Hundred Years of Solitude,Gabriel Garcia Marquez,1967,00-00-0001
+13,The Sun Also Rises,Ernest Hemingway,1926,00-00-0001
+12,The Old Man and the Sea,Ernest Hemingway,1952,25-07-2024
+11,Invisible Man,Ralph Ellison,1952,00-00-0001
+10,Heart of Darkness,Joseph Conrad,1899,00-00-0001
+9,Beloved,Toni Morrison,1987,24-07-2024
+8,Things Fall Apart,Chinua Achebe,1958,00-00-0001
+7,Slaughterhouse-Five,Kurt Vonnegut,1969,28-07-2024
+6,The Road,Cormac McCarthy,2006,00-00-0001
+5,To the Lighthouse,Virginia Woolf,1927,00-00-0001
+4,Lord of the Flies,William Golding,1954,25-07-2024
+3,A Clockwork Orange,Anthony Burgess,1962,00-00-0001
+2,On the Road,Jack Kerouac,1957,29-07-2024
+1,The Stranger,Albert Camus,1942,00-00-0001
+1,The Trial,Franz Kafka,1925,00-00-0001
+1,The Bell Jar,Sylvia Plath,1963,15-08-2024
