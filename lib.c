@@ -182,15 +182,6 @@ book *copyList(book *head) {
   return newBook;
 }
 
-size_t strlenn(char *str) {
-  size_t len = 0;
-  while (*str != '\0') {
-    str++;
-    len++;
-  }
-  return len;
-}
-
 const int levenshtein(char *s1, char *s2) {
   unsigned int s1len, s2len, x, y, lastdiag, olddiag;
   s1len = strlen(s1);
@@ -211,7 +202,7 @@ const int levenshtein(char *s1, char *s2) {
 }
 
 void LOWERCASE(char *text, char *result) {
-  size_t length = strlenn(text) + 1;
+  int length = strlen(text);
   for (size_t i = 0; i < length; i++) {
     result[i] = tolower((unsigned char)text[i]);
   }
@@ -219,7 +210,7 @@ void LOWERCASE(char *text, char *result) {
 }
 
 searchList *searchHelper(char *const input, book *head) {
-  size_t length = strlenn(input);
+  int length = strlen(input);
   char searchText[length + 1];
   LOWERCASE(input, searchText);
   // Filter
@@ -227,7 +218,7 @@ searchList *searchHelper(char *const input, book *head) {
   searchList *last = NULL;
 
   while (head != NULL) {
-    size_t pSize = strlenn(head->title);
+    int pSize = strlen(head->title);
     char *booklowc = malloc(pSize + 1);
     LOWERCASE(head->title, booklowc);
     const int distance = levenshtein(booklowc, searchText);
@@ -251,7 +242,6 @@ searchList *searchHelper(char *const input, book *head) {
     head = head->next;
     free(booklowc);
   }
-
   return filteredHead;
 }
 
@@ -293,7 +283,7 @@ int compareByDist(const void *a, const void *b) {
 int main() {
   book *popularityH = readCSV("./data.csv");
   if (popularityH == NULL) {
-    return 1;
+    printf("fail");
   }
   // book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
   // book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
@@ -314,8 +304,14 @@ int main() {
   }
 
   // Free the allocated memory for the array
+  searchList *current = filteredList;
+  while (current != NULL) {
+    searchList *temp = current;
+    current = current->next;
+    free(temp);
+  }
   free(array);
-
+  free(popularityH);
   // char *str1 = "1984";
   // char *str2 = "gatsby";
 
