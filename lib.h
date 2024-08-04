@@ -1,6 +1,7 @@
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
+
 // Define the book struct
 typedef struct Book {
     struct Book *next;
@@ -9,7 +10,6 @@ typedef struct Book {
     char author[100];
     int year;
     char returnD[100];
- 
 } book;
 
 typedef enum sorts {
@@ -17,27 +17,25 @@ typedef enum sorts {
     SORT_BY_TITLE,
     SORT_BY_AUTHOR,
     SORT_BY_YEAR,
-    SORT_BY_RETURN_DATE,
-    SORT_BY_AVAILABILITY
+    SORT_BY_RETURN_DATE
 } SortBy;
 
-//inverted index function
-typedef struct InvertedIndex {
-    char keyword[100];
-    book *books;
-    struct InvertedIndex *next;
-} InvertedIndex;
-
+// Function prototypes
 int compareBooks(const book *a, const book *b, SortBy criteria);
 book *readCSV(const char *filename);
-int linkSize(book *head);
-void divide(book *head, book **start, book **end);
-book *sortedMerge(book *a, book *b, SortBy criteria);
-book *mergeSort(book *head, SortBy criteria);
 void printList(book *head);
 book *copyList(book *head);
-InvertedIndex *createInvertedIndex(book *head);
-book *searchInvertedIndex(InvertedIndex *index, const char *keyword);
+void LOWERCASE(char *text, char *result);
 
-#endif //LIBRARY_H
+typedef struct searchList_ {
+    book *thisBook;
+    int distance;
+    struct searchList_ *next;
+} searchList;
+
+searchList *searchHelper(char *const input, book *head);
+int listToArray(searchList *head, searchList ***array);
+int compareByDist(const void *a, const void *b);
+
+#endif // LIBRARY_H
 

@@ -4,12 +4,11 @@
 // #define _XOPEN_SOURCE
 #define _GNU_SOURCE
 #define __USE_XOPEN
+#include <ctype.h>
 #include <time.h>
-// merge sort by every way to sort and have that in the heap, so when the user
-// requests it, we will have it ready. When a addition/deletion is made,
-// we will update it in every list in the heap and the csv as well.
-// Concerning searching, we will use a inverted index which is best for
-// keywords.
+#define MIN_DISTANCE 8
+#define MIN3(a, b, c)                                                          \
+  ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 
 // Popularity,Title,Author,Year,Return,
 typedef struct Book {
@@ -21,11 +20,11 @@ typedef struct Book {
   char returnD[100];
 } book;
 
-typedef struct invertedindex {
-  char keyword[100];
-  book *books;
-  struct invertedindex *next;
-} InvertedIndex;
+typedef struct searchList_ {
+  book *thisBook;
+  int distance;
+  struct searchList_ *next;
+} searchList;
 
 typedef enum sorts {
   SORT_BY_POPULARITY,
@@ -156,20 +155,10 @@ book *mergeSort(book *head, SortBy criteria) {
   return sortedMerge(a, b, criteria);
 }
 
-// void printList(book *head) {
-//     book *current = head;
-//     while (current != NULL) {
-//         printf("Title: %s\nAuthor: %s\nPopularity: %d\nYear: %d\nReturn Date:
-//         %d\nAvailable: %d\n\n",
-//                current->title, current->author, current->popularity,
-//                current->year, current->returnD);
-//         current = current->next;
-//     }
-// }
 void printList(book *head) {
   book *current = head;
   while (current != NULL) {
-    printf("Popularity: %d\n", current->popularity);
+    printf("%s\n", current->title);
     printf("--------------------------\n");
     current = current->next;
   }
@@ -180,10 +169,6 @@ book *copyList(book *head) {
     return NULL;
 
   book *newBook = malloc(sizeof(book));
-  if (newBook == NULL) {
-    printf("Memory allocation failed\n");
-    return NULL;
-  }
 
   // Copy the data from the original node to the new node
   newBook->popularity = head->popularity;
@@ -197,86 +182,151 @@ book *copyList(book *head) {
   return newBook;
 }
 
-InvertedIndex *createInvertedIndex(book *head) {
-  InvertedIndex *index = NULL;
+size_t strlenn(char *str) {
+  size_t len = 0;
+  while (*str != '\0') {
+    str++;
+    len++;
+  }
+  return len;
+}
 
-  book *current = head;
-  while (current != NULL) {
-    // Create keywords (for simplicity, consider only title and author)
-    char *keywords[] = {current->title, current->author};
+const int levenshtein(char *s1, char *s2) {
+  unsigned int s1len, s2len, x, y, lastdiag, olddiag;
+  s1len = strlen(s1);
+  s2len = strlen(s2);
+  unsigned int column[s1len + 1];
+  for (y = 1; y <= s1len; y++)
+    column[y] = y;
+  for (x = 1; x <= s2len; x++) {
+    column[0] = x;
+    for (y = 1, lastdiag = x - 1; y <= s1len; y++) {
+      olddiag = column[y];
+      column[y] = MIN3(column[y] + 1, column[y - 1] + 1,
+                       lastdiag + (s1[y - 1] == s2[x - 1] ? 0 : 1));
+      lastdiag = olddiag;
+    }
+  }
+  return column[s1len];
+}
 
-    for (int i = 0; i < 2; i++) {
-      InvertedIndex *existingNode = index;
-      InvertedIndex *prevNode = NULL;
+void LOWERCASE(char *text, char *result) {
+  size_t length = strlenn(text) + 1;
+  for (size_t i = 0; i < length; i++) {
+    result[i] = tolower((unsigned char)text[i]);
+  }
+  result[length] = '\0';
+}
 
-      while (existingNode != NULL &&
-             strcmp(existingNode->keyword, keywords[i]) != 0) {
-        prevNode = existingNode;
-        existingNode = existingNode->next;
-      }
+searchList *searchHelper(char *const input, book *head) {
+  size_t length = strlenn(input);
+  char searchText[length + 1];
+  LOWERCASE(input, searchText);
+  // Filter
+  searchList *filteredHead = NULL; // head of list
+  searchList *last = NULL;
 
-      if (existingNode == NULL) {
-        InvertedIndex *newNode = malloc(sizeof(InvertedIndex));
-        strcpy(newNode->keyword, keywords[i]);
-        newNode->books = copyList(current);
-        newNode->next = NULL;
-
-        if (prevNode == NULL) {
-          index = newNode;
-        } else {
-          prevNode->next = newNode;
-        }
+  while (head != NULL) {
+    size_t pSize = strlenn(head->title);
+    char *booklowc = malloc(pSize + 1);
+    LOWERCASE(head->title, booklowc);
+    const int distance = levenshtein(booklowc, searchText);
+    // searchlist
+    int pass = 0;
+    if (strstr(booklowc, searchText))
+      pass = 1;
+    if (distance <= MIN_DISTANCE || pass) {
+      searchList *filteredBook = malloc(sizeof(searchList));
+      filteredBook->thisBook = head;
+      filteredBook->distance = pass ? 0 : distance;
+      filteredBook->next = NULL;
+      if (filteredHead == NULL) {
+        filteredHead = filteredBook;
+        last = filteredBook;
       } else {
-        book *bookList = existingNode->books;
-        while (bookList->next != NULL) {
-          bookList = bookList->next;
-        }
-        bookList->next = copyList(current);
+        last->next = filteredBook;
+        last = filteredBook;
       }
     }
+    head = head->next;
+    free(booklowc);
+  }
+
+  return filteredHead;
+}
+
+// delete later
+void printList2(searchList *head) {
+  searchList *current = head;
+  char *str1 = "gatsby";
+  while (current != NULL) {
+    char *str2 = current->thisBook->title;
+    printf("in list: %s difference: %d\n", current->thisBook->title,
+           levenshtein(str2, str1));
+    printf("--------------------------\n");
     current = current->next;
   }
-  return index;
 }
 
-book *searchInvertedIndex(InvertedIndex *index, const char *keyword) {
-  while (index != NULL) {
-    if (strcmp(index->keyword, keyword) == 0) {
-      return index->books;
-    }
-    index = index->next;
+int listToArray(searchList *head, searchList ***array) {
+  int count = 0;
+  searchList *current = head;
+  while (current != NULL) {
+    count++;
+    current = current->next;
   }
-  return NULL;
+  *array = (searchList **)malloc(count * sizeof(searchList *));
+  current = head;
+  for (int i = 0; i < count; i++) {
+    (*array)[i] = current;
+    current = current->next;
+  }
+  return count;
 }
 
+int compareByDist(const void *a, const void *b) {
+  const searchList *sa = *(const searchList **)a;
+  const searchList *sb = *(const searchList **)b;
+  return sa->distance - sb->distance;
+}
+// search list to have dist
 int main() {
   book *popularityH = readCSV("./data.csv");
   if (popularityH == NULL) {
     return 1;
   }
-  book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
-  book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
-  book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
-  book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
+  // book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
+  // book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
+  // book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
+  // book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
+
+  // just use qsort to sort because im too lazy to modify the merge sort
+
+  // printList2(searchHelper("Gatsby", popularityH));
+
+  searchList *filteredList = searchHelper("Gatsby", popularityH);
+  searchList **array;
+  int size = listToArray(filteredList, &array);
+  qsort(array, size, sizeof(searchList *), compareByDist);
+  for (int i = 0; i < size; i++) {
+    printf("Title: %s, Distance: %d\n", array[i]->thisBook->title,
+           array[i]->distance);
+  }
+
+  // Free the allocated memory for the array
+  free(array);
+
+  // char *str1 = "1984";
+  // char *str2 = "gatsby";
+
+  // int distance = levenshtein(str1, str2);
+  // printf("\nLevenshtein distance between '%s' and '%s' is %d\n", str1, str2,
+  //        distance);
 
   // On front-end disconnection make sure to free
   // Also! may need to move the code above this to main.c
-  printList(yearH);
+  // printList(yearH);
   // printList(readCSV("./data.csv"));
-
-  // Create the inverted index
-  // InvertedIndex *index = createInvertedIndex(popularityH);
-
-  // char keyword[100];
-  // printf("Enter a keyword to search: ");
-  // scanf("%99s", keyword);
-
-  // book *result = searchInvertedIndex(index, keyword);
-  // if (result != NULL) {
-  //   printList(result);
-  // } else {
-  //   printf("No results found for keyword: %s\n", keyword);
-  // }
 
   return 0;
 }
