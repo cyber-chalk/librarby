@@ -16,7 +16,7 @@ jobs:
         sudo apt-get install -y gcc valgrind
 
     - name: Compile code
-      run: gcc -Wall -Werror -o myprogram main.c
+      run: gcc -Wall -Werror -o myprogram lib.c
 
     - name: Run program
       run: ./myprogram || { echo 'Program crashed'; exit 1; }
