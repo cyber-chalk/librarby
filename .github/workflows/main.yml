@@ -1,0 +1,25 @@
+name: C Build and Check
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install GCC and Valgrind
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc valgrind
+
+    - name: Compile code
+      run: gcc -Wall -Werror -o myprogram main.c
+
+    - name: Run program
+      run: ./myprogram || { echo 'Program crashed'; exit 1; }
+
+    - name: Check for memory leaks
+      run: valgrind --leak-check=full --error-exitcode=1 ./myprogram
