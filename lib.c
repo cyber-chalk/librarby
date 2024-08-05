@@ -280,6 +280,16 @@ int compareByDist(const void *a, const void *b) {
   return sa->distance - sb->distance;
 }
 // search list to have dist
+
+void freeBooks(book *head) {
+  book *current = head;
+  while (current != NULL) {
+    book *next = current->next;
+    free(current);
+    current = next;
+  }
+}
+
 int main() {
   book *popularityH = readCSV("./data.csv");
   if (popularityH == NULL) {
@@ -311,7 +321,7 @@ int main() {
     free(temp);
   }
   free(array);
-  free(popularityH);
+  freeBooks(popularityH);
   // char *str1 = "1984";
   // char *str2 = "gatsby";
 
