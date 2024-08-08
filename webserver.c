@@ -62,8 +62,7 @@ struct Route *search(struct Route *root, char *key) {
   } else if (strcmp(key, root->key) < 0) {
     return search(root->left, key);
   }
-  printf("error no match in search");
-  return NULL;
+  printf("not returning anything");
 }
 
 void freeRoutes(struct Route *root) {
@@ -78,6 +77,7 @@ void freeRoutes(struct Route *root) {
 
 int main() {
   char header[64] = "HTTP/1.1 200 OK\r\n\n";
+  char header404[64] = "HTTP/1.1 404 Not Found\r\n\n";
   //  strcat(header, responseData);
 
   // create a socket
@@ -114,20 +114,47 @@ int main() {
       fileType = dot + 1;
     }
 
-    printf("\nMethod + Route:%s.%s.\n", method, urlRoute);
+    printf("\nMethod + Route + Type:%s.%s.%s.\n", method, urlRoute, fileType);
     int notFound = 0;
-    // char template[100] = "";
+
+    if (notFound == 0 && strcmp(fileType, "html") == 0) {
+      printf("yup");
+    } else {
+      printf("nope");
+    }
+
     struct Route *dest;
     if (strcmp(method, "GET") == 0) {
       dest = search(route, urlRoute);
       if (dest == NULL)
         notFound = 1;
     }
-    // GET /file.html eg
-    char *filePath = notFound ? "./public/404.html" : dest->value;
+
+    char *filePath;
+    if (notFound == 1 && strcmp(fileType, "html") == 0) {
+      filePath = "./public/404.html";
+      printf("======404=======");
+      notFound = 2;
+    }
+    if (notFound == 1) {
+      send(client, header404, strlen(header404), 0);
+      printf("\n-----404!-----\n");
+      close(client);
+      continue;
+    }
+    if (notFound != 2)
+      filePath = dest->value;
+    // filePath = dest->value; // sometimes this is NULL for some reason
+    printf("filePath: %s\n", dest->value);
+
+    FILE *fp = fopen(dest->value, "r");
+    fseek(fp, 0L, SEEK_END);
+    size_t size = ftell(fp);
+    fclose(fp);
+    // printf(" size:%d ", (int)size);
     send(client, header, strlen(header), 0);
     int opened_fd = open(filePath, O_RDONLY);
-    sendfile(client, opened_fd, 0, 256);
+    sendfile(client, opened_fd, 0, size);
 
     close(opened_fd);
     close(client);
