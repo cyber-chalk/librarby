@@ -117,12 +117,6 @@ int main() {
     printf("\nMethod + Route + Type:%s.%s.%s.\n", method, urlRoute, fileType);
     int notFound = 0;
 
-    if (notFound == 0 && strcmp(fileType, "html") == 0) {
-      printf("yup");
-    } else {
-      printf("nope");
-    }
-
     struct Route *dest;
     if (strcmp(method, "GET") == 0) {
       dest = search(route, urlRoute);
@@ -142,12 +136,13 @@ int main() {
       close(client);
       continue;
     }
-    if (notFound != 2)
+    if (notFound != 2) {
       filePath = dest->value;
+    }
     // filePath = dest->value; // sometimes this is NULL for some reason
-    printf("filePath: %s\n", dest->value);
+    printf("filePath: %s\n", filePath);
 
-    FILE *fp = fopen(dest->value, "r");
+    FILE *fp = fopen(filePath, "r");
     fseek(fp, 0L, SEEK_END);
     size_t size = ftell(fp);
     fclose(fp);
