@@ -137,9 +137,8 @@ int main() {
       continue;
     }
     if (notFound != 2) {
-      filePath = dest->value;
+      filePath = dest->value; // sometimes this is NULL for some reason
     }
-    // filePath = dest->value; // sometimes this is NULL for some reason
     printf("filePath: %s\n", filePath);
 
     FILE *fp = fopen(filePath, "r");
