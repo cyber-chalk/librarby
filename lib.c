@@ -63,7 +63,7 @@ book *readCSV(const char *filename) {
     // - %d: Read an integer (popularity, year, returnD, available)
     // - %99[^,]: Read a string (up to 99 characters or until a comma) (title,
     // author)
-    sscanf(line, "%d,%99[^,],%99[^,],%d,%d,%d", &newBook->popularity,
+    sscanf(line, "%d,%99[^,],%99[^,],%d,%d,%d",	 &newBook->popularity,
            newBook->title, newBook->author, &newBook->year, &newBook->returnD,
            &newBook->available);
     newBook->next = NULL;
@@ -176,6 +176,74 @@ book *copyList(book *head) {
   return newBook;
 }
 
+void deleteBook(book *head, char delTitle[], SortBy criteria) {
+	if (head == NULL) {
+		return;
+	}
+	
+	// Create pointers to traverse list
+	book *current = head;
+	book *previous = NULL;
+	
+	// Traverse until book is found
+	while (current != NULL && current->title != delTitle) {
+		previous = current;
+		current = current->next;
+	}
+	if (current == NULL) {
+		printf("Book does not exist in system\n");
+		return;
+	}
+	
+	// Delete book
+	previous->next = current->next;
+	free(current);
+	
+	// Sort
+	mergeSort(head, criteria);
+	
+	return;
+}
+
+void addBook(book *head, int newPopularity, char *newTitle, char *newAuthor, int newYear, int newReturnD, int newAvailable, SortBy criteria) {
+	if (head == NULL) {
+		return;
+	}
+	
+	// Allocate Memory for new book
+	book *newBook = malloc(sizeof(book));
+  if (newBook == NULL) {
+    printf("Memory allocation failed\n");
+    return NULL;
+  }
+  
+  // Transfer new data to new book
+  newBook->popularity = newPopularity;
+  strcpy(newBook->title, newTitle);
+  strcpy(newbook->author, newAuthor);
+  newBook->year = newYear;
+  newBook->returnD = newReturnD;
+  newBook->available = newAvailable;
+  
+  // Insert new book to front of list
+  newBook->next = head;
+  head = newBook;
+  
+  // Sort
+  mergeSort(head, criteria);
+  
+  // Edit .csv
+  FILE *file = fopen("./data.csv", "a");
+  if (file == NULL) {
+    printf("file not opening");
+    return NULL;
+  }
+  fprintf(file, "%d,%s,%s,%d,%d,%d", newPopularity, newTitle, newAuthor, newYear, newReturnD, newAvailable);
+  fclose(file);
+  
+  return;
+}
+
 int main() {
   book *popularityH = readCSV("./data.csv");
   book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
@@ -191,3 +259,4 @@ int main() {
 
   return 0;
 }
+
