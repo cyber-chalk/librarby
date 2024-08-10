@@ -47,6 +47,28 @@ int compareBooks(const book *a, const book *b, SortBy criteria) {
   }
 }
 
+void writeCSV(const char *filename, book *head) {
+    // Open file
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Write CSV headers
+    fprintf(file, "Popularity,Title,Author,Year,Return Date,Available\n");
+
+    // Transfer list to .csv
+    while (head != NULL) {
+        fprintf(file, "%d,%s,%s,%d,%d,%d\n", head->popularity, head->title, head->author, head->year, head->returnD, head->available);
+        head = head->next;
+    }
+
+    // Close the file
+    fclose(file);
+    return;
+}
+
 book *readCSV(const char *filename) {
   FILE *file = fopen(filename, "r");
   if (file == NULL) {
@@ -63,7 +85,7 @@ book *readCSV(const char *filename) {
     // - %d: Read an integer (popularity, year, returnD, available)
     // - %99[^,]: Read a string (up to 99 characters or until a comma) (title,
     // author)
-    sscanf(line, "%d,%99[^,],%99[^,],%d,%d,%d", &newBook->popularity,
+    sscanf(line, "%d,%99[^,],%99[^,],%d,%d,%d",	 &newBook->popularity,
            newBook->title, newBook->author, &newBook->year, &newBook->returnD,
            &newBook->available);
     newBook->next = NULL;
@@ -174,6 +196,79 @@ book *copyList(book *head) {
   newBook->next = copyList(head->next);
 
   return newBook;
+}
+
+// Must call multipule times if multipule lists need to be updated
+void deleteBook(book **headRef, char delTitle[], SortBy criteria) {
+	if (*headRef == NULL) {
+		return;
+	}
+	
+	// Create pointers to traverse list
+	book *current = *headRef;
+	book *previous = NULL;
+	
+	// Traverse until book is found
+	while (current != NULL && strcmp(current->title, delTitle) != 0) {
+		previous = current;
+		current = current->next;
+	}
+	if (current == NULL) {
+		printf("Book does not exist in system\n");
+		return;
+	}
+	
+	// Delete book
+	if (previous == NULL) {
+        *headRef = current->next;
+    } else {
+        previous->next = current->next;
+    }
+	free(current);
+	
+	writeCSV("./data.csv", *headRef);
+	
+	mergeSort(*headRef, criteria);
+	
+	return;
+}
+
+// Must call multipule times if multipule lists need to be updated
+void addBook(book **headRef, int newPopularity, const char *newTitle, const char *newAuthor, int newYear, int newReturnD, int newAvailable, SortBy criteria) {
+    // Allocate memory for the new book
+    book *newBook = malloc(sizeof(book));
+    if (newBook == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+  
+    // Transfer new data to the new book
+    newBook->popularity = newPopularity;
+    strncpy(newBook->title, newTitle, sizeof(newBook->title) - 1);
+    newBook->title[sizeof(newBook->title) - 1] = '\0'; // Ensure null-termination
+    strncpy(newBook->author, newAuthor, sizeof(newBook->author) - 1);
+    newBook->author[sizeof(newBook->author) - 1] = '\0'; // Ensure null-termination
+    newBook->year = newYear;
+    newBook->returnD = newReturnD;
+    newBook->available = newAvailable;
+  
+    // Insert the new book at the front of the list
+    newBook->next = *headRef;
+    *headRef = newBook;
+  
+    // Sort the list based on the given criteria
+    mergeSort(*headRef, criteria);
+  
+    // Append the new book to the CSV file
+    FILE *file = fopen("./data.csv", "a");
+    if (file == NULL) {
+        printf("File did not open\n");
+        free(newBook);
+        return;
+    }
+    fprintf(file, "%d,%s,%s,%d,%d,%d\n", newPopularity, newTitle, newAuthor, newYear, newReturnD, newAvailable);
+    fclose(file);
+    return;
 }
 
 int main() {

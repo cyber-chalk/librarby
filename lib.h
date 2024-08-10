@@ -23,10 +23,13 @@ typedef enum sorts {
 
 int compareBooks(const book *a, const book *b, SortBy criteria);
 book *readCSV(const char *filename);
+void writeCSV(const char *filename, book *head);
 int linkSize(book *head);
 void divide(book *head, book **start, book **end);
 book *sortedMerge(book *a, book *b, SortBy criteria);
 book *mergeSort(book *head, SortBy criteria);
+void deleteBook(book **headRef, char delTitle[], SortBy criteria)
+void addBook(book **headRef, int newPopularity, const char *newTitle, const char *newAuthor, int newYear, int newReturnD, int newAvailable, SortBy criteria);
 // add functions that you make please
 
 #endif //LIBRARY_H
