@@ -290,6 +290,52 @@ void freeBooks(book *head) {
   }
 }
 
+//view the return dates on books
+void viewReturnDate(book *head, const char *name) {
+  while (head != NULL) {
+    if (strcmp(head->title, name) == 0) {
+      if (strcmp(head->returnD, "00-00-0001") != 0) {
+        printf("the return date for %s is: %s\n", name, head->returnD);
+      } else {
+        printf("'%s' does not have a return date. use 'issueDate' to issue a date to this book\n", name);
+      }
+      return;
+    }
+    head = head->next;
+  }
+  printf("could not find a book with the title '%s'\n", name);
+}
+
+//issue a return date to a book
+void issueDate(book *head, const char *name, const char *issueD) {
+  while (head != NULL) {
+    if (strcmp(head->title, name) ==0) {
+      if (strcmp(head->returnD, "00-00-0001") == 0) {
+        strcpy(head->returnD, issueD);
+
+        printf("%s has been given the issue date of '%s'\n", name, issueD);
+      } else {
+        printf("this book already has a return date, '%s'. use 'clearReturnDate' to clear it first\n", head->returnD);
+      }
+      return;
+    }
+    head = head->next;
+  }
+  printf("could not find a book with the title '%s'\n", name);
+}
+
+//clear previous return dates and set to default
+void clearReturnDate( book *head, const char *name) {
+  while (head != NULL) {
+    if (strcmp(head->title, name) == 0) {
+      strcpy(head->returnD, "00-00-0001");
+      return;
+    }
+    head = head->next;
+  }
+  printf("could not find a book with the title '%s'\n", name);
+}
+
 int main() {
   book *popularityH = readCSV("./data.csv");
   if (popularityH == NULL) {
