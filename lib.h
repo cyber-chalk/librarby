@@ -27,6 +27,10 @@ void printList(book *head);
 book *copyList(book *head);
 void LOWERCASE(char *text, char *result);
 
+void viewReturnDate(book *head, const char *name);
+void issueDate(book *head, const char *name, const char *issueD);
+void clearReturnDate( book *head, const char *name);
+
 typedef struct searchList_ {
     book *thisBook;
     int distance;
