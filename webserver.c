@@ -75,9 +75,37 @@ void freeRoutes(struct Route *root) {
   }
 }
 
+char *mimes(char *ext) {
+
+  // clang-format off
+    if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) { return "text/html"; }
+    if (strcmp(ext, "jpeg") == 0 || strcmp(ext, "jpg") == 0) { return "image/jpg"; }
+    if (strcmp(ext, "css") == 0) { return "text/css"; }
+    if (strcmp(ext, "js") == 0) { return "application/javascript"; }
+    if (strcmp(ext, "json") == 0) { return "application/json"; }
+    if (strcmp(ext, "txt") == 0) { return "text/plain"; }
+    if (strcmp(ext, "gif") == 0) { return "image/gif"; }
+    if (strcmp(ext, "png") == 0) { return "image/png"; }
+  printf("\n missed mimes"); 
+  return "text/plain";
+  // clang-format on
+}
+
+char *headerBuilder(char *ext, int b404, char *header, int size) {
+  if (b404 == 2) {
+    snprintf(header, size,
+             "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n");
+  } else {
+    snprintf(header, size, "HTTP/1.1 200 OK\r\nContent-Type: %s\r\n\r\n",
+             mimes(ext));
+  }
+  return header;
+}
+
 int main() {
-  char header[64] = "HTTP/1.1 200 OK\r\n\n";
-  char header404[64] = "HTTP/1.1 404 Not Found\r\n\n";
+  // char header[64] = "HTTP/1.1 200 OK\r\n\n";
+  char header404[128] =
+      "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n";
   //  strcat(header, responseData);
 
   // create a socket
@@ -113,7 +141,8 @@ int main() {
     if (dot && *(dot + 1) != '\0') {
       fileType = dot + 1;
     }
-
+    if (strcmp(urlRoute, "/") == 0)
+      fileType = "html";
     printf("\nMethod + Route + Type:%s.%s.%s.\n", method, urlRoute, fileType);
 
     if (strcmp(method, "GET") == 0) {
@@ -144,6 +173,9 @@ int main() {
       size_t size = ftell(fp);
       fclose(fp);
       // printf(" size:%d ", (int)size);
+
+      char template[128];
+      char *header = headerBuilder(fileType, notFound, template, 128);
       send(client, header, strlen(header), 0);
       int opened_fd = open(filePath, O_RDONLY);
       sendfile(client, opened_fd, 0, size);
