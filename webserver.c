@@ -132,17 +132,27 @@ int main() {
     recv(client, buffer, 256, 0);
     printf("\n%s", buffer);
 
+    // GET /idk.html?search_queary=popularity HTTP/1.1
     char *clientHeader = strtok(buffer, "\n"); // automatically adds 0/
+
     char *method = strtok(clientHeader, " ");
-    char *urlRoute = strtok(NULL, " ");
+    char *urlRoute = strtok(NULL, "?");
     char *fileType = NULL;
     char *dot = strrchr(urlRoute, '.');
     if (dot && *(dot + 1) != '\0') {
       fileType = dot + 1;
     }
+
+    char *query = NULL;
+    if (strtok(NULL, "=")) {
+      // get popularity, whats after the = and before its next space
+      query = strtok(NULL, " ");
+    }
+
     if (strcmp(urlRoute, "/") == 0)
       fileType = "html";
-    printf("\nMethod + Route + Type:%s.%s.%s.\n", method, urlRoute, fileType);
+    printf("\nMethod + Route + Type + Query:%s.%s.%s.%s.\n", method, urlRoute,
+           fileType, query);
 
     if (strcmp(method, "GET") == 0) {
       int notFound = 0;
@@ -182,6 +192,7 @@ int main() {
       close(opened_fd);
       close(client);
     } else if (strcmp(method, "POST") == 0) {
+      // write to csv
     }
   }
   freeRoutes(route);
