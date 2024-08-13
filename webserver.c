@@ -115,43 +115,43 @@ int main() {
     }
 
     printf("\nMethod + Route + Type:%s.%s.%s.\n", method, urlRoute, fileType);
-    int notFound = 0;
 
-    struct Route *dest;
     if (strcmp(method, "GET") == 0) {
-      dest = search(route, urlRoute);
+      int notFound = 0;
+      struct Route *dest = search(route, urlRoute);
       if (dest == NULL)
         notFound = 1;
-    }
 
-    char *filePath;
-    if (notFound == 1 && strcmp(fileType, "html") == 0) {
-      filePath = "./public/404.html";
-      printf("======404=======");
-      notFound = 2;
-    }
-    if (notFound == 1) {
-      send(client, header404, strlen(header404), 0);
-      printf("\n-----404!-----\n");
+      char *filePath;
+      if (notFound == 1 && fileType != NULL && strcmp(fileType, "html") == 0) {
+        filePath = "./public/404.html";
+        printf("======404=======");
+        notFound = 2;
+      }
+      if (notFound == 1) {
+        send(client, header404, strlen(header404), 0);
+        printf("\n-----404!-----\n");
+        close(client);
+        continue;
+      }
+      if (notFound != 2) {
+        filePath = dest->value; // sometimes this is NULL for some reason
+      }
+      printf("filePath: %s\n", filePath);
+
+      FILE *fp = fopen(filePath, "r");
+      fseek(fp, 0L, SEEK_END);
+      size_t size = ftell(fp);
+      fclose(fp);
+      // printf(" size:%d ", (int)size);
+      send(client, header, strlen(header), 0);
+      int opened_fd = open(filePath, O_RDONLY);
+      sendfile(client, opened_fd, 0, size);
+
+      close(opened_fd);
       close(client);
-      continue;
+    } else if (strcmp(method, "POST") == 0) {
     }
-    if (notFound != 2) {
-      filePath = dest->value; // sometimes this is NULL for some reason
-    }
-    printf("filePath: %s\n", filePath);
-
-    FILE *fp = fopen(filePath, "r");
-    fseek(fp, 0L, SEEK_END);
-    size_t size = ftell(fp);
-    fclose(fp);
-    // printf(" size:%d ", (int)size);
-    send(client, header, strlen(header), 0);
-    int opened_fd = open(filePath, O_RDONLY);
-    sendfile(client, opened_fd, 0, size);
-
-    close(opened_fd);
-    close(client);
   }
   freeRoutes(route);
   close(server_socket);
