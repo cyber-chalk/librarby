@@ -94,7 +94,7 @@ char *mimes(char *ext) {
 char *headerBuilder(char *ext, int b404, char *header, int size) {
   if (b404 == 2) {
     snprintf(header, size,
-             "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n");
+             "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n");
   } else {
     snprintf(header, size, "HTTP/1.1 200 OK\r\nContent-Type: %s\r\n\r\n",
              mimes(ext));
@@ -104,8 +104,7 @@ char *headerBuilder(char *ext, int b404, char *header, int size) {
 
 int main() {
   // char header[64] = "HTTP/1.1 200 OK\r\n\n";
-  char header404[128] =
-      "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n";
+  char header404[128] = "HTTP/1.1 404 Not Found\r\n\r\n";
   //  strcat(header, responseData);
 
   // create a socket
