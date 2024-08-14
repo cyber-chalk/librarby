@@ -1,3 +1,5 @@
+#include "./webserver.h"
+#include "./routes.h"
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -114,6 +116,7 @@ int main() {
   // key value
   struct Route *route = initRoute("/", "./public/index.html");
   addRoute(route, "/styles.css", "./public/styles.css");
+  addAllRoutes(route);
 
   // define the address
   // struct sockaddr_in addr = {AF_INET, htons(8001), INADDR_ANY};
@@ -197,6 +200,7 @@ int main() {
       close(client);
     } else if (strcmp(method, "POST") == 0) {
       // write to csv
+      // if its a search, just return a string through websockers
     }
   }
   freeRoutes(route);
