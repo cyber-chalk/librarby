@@ -135,8 +135,9 @@ int main() {
     // GET /idk.html?search_queary=popularity HTTP/1.1
     char *clientHeader = strtok(buffer, "\n"); // automatically adds 0/
 
+    char *questionMark = strchr(clientHeader, '?');
     char *method = strtok(clientHeader, " ");
-    char *urlRoute = strtok(NULL, "?");
+    char *urlRoute = strtok(NULL, questionMark ? "?" : " ");
     char *fileType = NULL;
     char *dot = strrchr(urlRoute, '.');
     if (dot && *(dot + 1) != '\0') {
@@ -144,10 +145,9 @@ int main() {
     }
 
     char *query = NULL;
-    if (strtok(NULL, "=")) {
-      // get popularity, whats after the = and before its next space
+    if (strtok(NULL, "="))
       query = strtok(NULL, " ");
-    }
+    // get popularity, whats after the = and before its next space
 
     if (strcmp(urlRoute, "/") == 0)
       fileType = "html";
