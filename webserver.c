@@ -156,6 +156,10 @@ int main() {
 
     if (strcmp(method, "GET") == 0) {
       int notFound = 0;
+
+      if (query) {
+        // get data.csv sorted accordingly
+      }
       struct Route *dest = search(route, urlRoute);
       if (dest == NULL)
         notFound = 1;
