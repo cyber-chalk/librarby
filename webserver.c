@@ -83,6 +83,7 @@ char *mimes(char *ext) {
     if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) { return "text/html"; }
     if (strcmp(ext, "jpeg") == 0 || strcmp(ext, "jpg") == 0) { return "image/jpg"; }
     if (strcmp(ext, "css") == 0) { return "text/css"; }
+    if (strcmp(ext, "ico") == 0) { return "image/png"; }
     if (strcmp(ext, "js") == 0) { return "application/javascript"; }
     if (strcmp(ext, "json") == 0) { return "application/json"; }
     if (strcmp(ext, "txt") == 0) { return "text/plain"; }
@@ -106,7 +107,15 @@ char *headerBuilder(char *ext, int b404, char *header, int size) {
 
 int main() {
   // char header[64] = "HTTP/1.1 200 OK\r\n\n";
-  char header404[128] = "HTTP/1.1 404 Not Found\r\n\r\n";
+  // char header404[128] = "HTTP/1.1 404 Not Found\r\n\r\n";
+  const char *errorPage = "<html><body>404 Not Found 2</body></html>";
+  char header404[256];
+  snprintf(header404, sizeof(header404),
+           "HTTP/1.1 404 Not Found\r\n"
+           "Content-Type: text/html\r\n"
+           "Content-Length: %zu\r\n" // Length of the errorPage content
+           "\r\n",
+           strlen(errorPage));
   //  strcat(header, responseData);
 
   // create a socket
@@ -124,9 +133,9 @@ int main() {
   addr.sin_family = AF_INET;
   addr.sin_port = htons(8001);
   addr.sin_addr.s_addr = INADDR_ANY;
-  int bound = bind(server_socket, (struct sockaddr *)&addr, sizeof(addr));
+  bind(server_socket, (struct sockaddr *)&addr, sizeof(addr));
 
-  listen(server_socket, 5);
+  listen(server_socket, 15);
 
   while (1) {
     int client = accept(server_socket, NULL, NULL);
@@ -175,12 +184,13 @@ int main() {
       }
       if (notFound == 1) {
         send(client, header404, strlen(header404), 0);
+        send(client, errorPage, strlen(errorPage), 0);
         printf("\n-----404!-----\n");
         close(client);
         continue;
       }
       if (notFound != 2) {
-        filePath = dest->value; // sometimes this is NULL for some reason
+        filePath = dest->value;
       }
       printf("filePath: %s\n", filePath);
 
@@ -189,7 +199,6 @@ int main() {
       size_t size = ftell(fp);
       fclose(fp);
       // printf(" size:%d ", (int)size);
-
       char template[128];
       char *header = headerBuilder(fileType, notFound, template, 128);
       send(client, header, strlen(header), 0);

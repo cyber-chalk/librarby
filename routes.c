@@ -4,6 +4,8 @@
 void addAllRoutes(void *route) {
   // clang-format off
 addRoute(route, "/addicon.png", "./public/assets/addicon.png");
+
+addRoute(route, "/favicon.ico", "./public/assets/logo.png");
 addRoute(route, "/bar.png", "./public/assets/bar.png");
 addRoute(route, "/bookIcon.png", "./public/assets/bookIcon.png");
 addRoute(route, "/bowBdtl.png", "./public/assets/bowBdtl.png");
