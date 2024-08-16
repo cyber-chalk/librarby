@@ -2,6 +2,7 @@
 #include "./routes.h"
 #include <fcntl.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,8 +22,8 @@ struct Route {
 struct Route *initRoute(char *key, char *value) {
   struct Route *temp = (struct Route *)malloc(sizeof(struct Route));
 
-  temp->key = key;
-  temp->value = value;
+  temp->key = strdup(key);
+  temp->value = strdup(value);
 
   temp->left = temp->right = NULL;
   return temp;
@@ -105,6 +106,30 @@ char *headerBuilder(char *ext, int b404, char *header, int size) {
   return header;
 }
 
+// char *loadFileToString(const char *filePath) {
+//   FILE *file = fopen(filePath, "rb");
+//   if (!file)
+//     return NULL;
+
+//   fseek(file, 0L, SEEK_END);
+//   size_t size = ftell(file);
+//   fseek(file, 0L, SEEK_SET);
+
+//   char *buffer = malloc(size + 1);
+//   if (buffer) {
+//     size_t bytesRead = fread(buffer, 1, size, file);
+//     if (bytesRead != size) {
+//       free(buffer);
+//       fclose(file);
+//       return NULL;
+//     }
+//     buffer[size] = '\0'; // Null-terminate the string
+//   }
+
+//   fclose(file);
+//   return buffer;
+// }
+
 int main() {
   // char header[64] = "HTTP/1.1 200 OK\r\n\n";
   // char header404[128] = "HTTP/1.1 404 Not Found\r\n\r\n";
@@ -140,9 +165,9 @@ int main() {
   while (1) {
     int client = accept(server_socket, NULL, NULL);
 
-    char buffer[256] = {0};
+    char buffer[512] = {0};
     recv(client, buffer, 256, 0);
-    printf("\n%s", buffer);
+    // printf("\n%s", buffer);
 
     // GET /idk.html?search_queary=popularity HTTP/1.1
     char *clientHeader = strtok(buffer, "\n"); // automatically adds 0/
@@ -199,12 +224,42 @@ int main() {
       size_t size = ftell(fp);
       fclose(fp);
       // printf(" size:%d ", (int)size);
+
       char template[128];
       char *header = headerBuilder(fileType, notFound, template, 128);
-      send(client, header, strlen(header), 0);
+      int on = 1;
+      int off = 0;
+      off_t offset = 0;
+      ssize_t sent_bytes = 0;
+      // setsockopt(client, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
+      setsockopt(client, IPPROTO_TCP, TCP_CORK, &on, sizeof(on));
       int opened_fd = open(filePath, O_RDONLY);
-      sendfile(client, opened_fd, 0, size);
 
+      // printf("header Size %ld\nFile size, string %ld %d\n", strlen(header),
+      //        size, get_file_size(opened_fd));
+
+      send(client, header, strlen(header), 0);
+      // send(client, loadFileToString(filePath), size, 0);
+      while (offset < size) {
+        ssize_t current_bytes =
+            sendfile(client, opened_fd, &offset, size - offset);
+        if (current_bytes <= 0) {
+          perror("sendfile error");
+          exit(EXIT_FAILURE);
+          break;
+        }
+        sent_bytes += current_bytes;
+        //       offset -= sent_bytes;
+      }
+      printf("Offset Sent, Size: %ld, %ld, %ld\n", offset, sent_bytes, size);
+      if (sent_bytes < size) {
+        fprintf(stderr, "Error: Only %ld of %ld bytes sent\n", sent_bytes,
+                size);
+        perror("Incomplete sendfile transmission");
+      }
+      setsockopt(client, IPPROTO_TCP, TCP_CORK, &off, sizeof(off));
+      //  setsockopt(client, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
+      //    sendfile(client, opened_fd, 0, size);
       close(opened_fd);
       close(client);
     } else if (strcmp(method, "POST") == 0) {
