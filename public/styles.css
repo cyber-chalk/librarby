@@ -26,8 +26,17 @@ body::before {
     margin-right: auto;
 }
 
+
 #logo {
     width: 40vw;
+    height: 200px;
+    /* need to define height and width explicitly (to my understanding) */
+    width: 200px;
+
+    /* shift image around in the image box */
+    object-fit: cover;
+    /* cover or contain */
+    object-position: center
 }
 
 #search-block {
