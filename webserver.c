@@ -258,8 +258,8 @@ int main() {
         perror("Incomplete sendfile transmission");
       }
       setsockopt(client, IPPROTO_TCP, TCP_CORK, &off, sizeof(off));
-      //  setsockopt(client, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
-      //    sendfile(client, opened_fd, 0, size);
+      // setsockopt(client, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
+      //   sendfile(client, opened_fd, 0, size);
       close(opened_fd);
       close(client);
     } else if (strcmp(method, "POST") == 0) {
