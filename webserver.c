@@ -150,6 +150,7 @@ int main() {
   // key value
   struct Route *route = initRoute("/", "./public/index.html");
   addRoute(route, "/styles.css", "./public/styles.css");
+  addRoute(route, "/index.js", "./public/index.js");
   addAllRoutes(route);
 
   // define the address
