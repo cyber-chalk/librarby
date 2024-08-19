@@ -66,6 +66,30 @@ int compareBooks(const book *a, const book *b, SortBy criteria) {
   }
 }
 
+// Tom's function
+void writeCSV(const char *filename, book *head) {
+  // Open file
+  FILE *file = fopen(filename, "w");
+  if (file == NULL) {
+    perror("Error opening file");
+    return;
+  }
+
+  // Write CSV headers
+  fprintf(file, "Popularity,Title,Author,Year,Return Date,Available\n");
+
+  // Transfer list to .csv
+  while (head != NULL) {
+    fprintf(file, "%d,%s,%s,%d,%s\n", head->popularity, head->title,
+            head->author, head->year, head->returnD);
+    head = head->next;
+  }
+
+  // Close the file
+  fclose(file);
+  return;
+}
+
 book *readCSV(const char *filename) {
   FILE *file = fopen(filename, "r");
   if (file == NULL) {
@@ -290,14 +314,16 @@ void freeBooks(book *head) {
   }
 }
 
-//view the return dates on books
+// view the return dates on books
 void viewReturnDate(book *head, const char *name) {
   while (head != NULL) {
     if (strcmp(head->title, name) == 0) {
       if (strcmp(head->returnD, "00-00-0001") != 0) {
         printf("the return date for %s is: %s\n", name, head->returnD);
       } else {
-        printf("'%s' does not have a return date. use 'issueDate' to issue a date to this book\n", name);
+        printf("'%s' does not have a return date. use 'issueDate' to issue a "
+               "date to this book\n",
+               name);
       }
       return;
     }
@@ -306,16 +332,18 @@ void viewReturnDate(book *head, const char *name) {
   printf("could not find a book with the title '%s'\n", name);
 }
 
-//issue a return date to a book
+// issue a return date to a book
 void issueDate(book *head, const char *name, const char *issueD) {
   while (head != NULL) {
-    if (strcmp(head->title, name) ==0) {
+    if (strcmp(head->title, name) == 0) {
       if (strcmp(head->returnD, "00-00-0001") == 0) {
         strcpy(head->returnD, issueD);
 
         printf("%s has been given the issue date of '%s'\n", name, issueD);
       } else {
-        printf("this book already has a return date, '%s'. use 'clearReturnDate' to clear it first\n", head->returnD);
+        printf("this book already has a return date, '%s'. use "
+               "'clearReturnDate' to clear it first\n",
+               head->returnD);
       }
       return;
     }
@@ -324,8 +352,8 @@ void issueDate(book *head, const char *name, const char *issueD) {
   printf("could not find a book with the title '%s'\n", name);
 }
 
-//clear previous return dates and set to default
-void clearReturnDate( book *head, const char *name) {
+// clear previous return dates and set to default
+void clearReturnDate(book *head, const char *name) {
   while (head != NULL) {
     if (strcmp(head->title, name) == 0) {
       strcpy(head->returnD, "00-00-0001");
@@ -334,6 +362,81 @@ void clearReturnDate( book *head, const char *name) {
     head = head->next;
   }
   printf("could not find a book with the title '%s'\n", name);
+}
+
+// Tom's code
+// Must call multipule times if multipule lists need to be updated
+void deleteBook(book **headRef, char delTitle[], SortBy criteria) {
+  if (*headRef == NULL) {
+    return;
+  }
+
+  // Create pointers to traverse list
+  book *current = *headRef;
+  book *previous = NULL;
+
+  // Traverse until book is found
+  while (current != NULL && strcmp(current->title, delTitle) != 0) {
+    previous = current;
+    current = current->next;
+  }
+  if (current == NULL) {
+    printf("Book does not exist in system\n");
+    return;
+  }
+
+  // Delete book
+  if (previous == NULL) {
+    *headRef = current->next;
+  } else {
+    previous->next = current->next;
+  }
+  free(current);
+  writeCSV("./data.csv", *headRef);
+  mergeSort(*headRef, criteria);
+  return;
+}
+
+// Must call multipule times if multipule lists need to be updated
+void addBook(book **headRef, int newPopularity, const char *newTitle,
+             const char *newAuthor, int newYear, char *newReturnD,
+             SortBy criteria) {
+  // Allocate memory for the new book
+  book *newBook = malloc(sizeof(book));
+  if (newBook == NULL) {
+    printf("Memory allocation failed\n");
+    return;
+  }
+
+  // Transfer new data to the new book
+  newBook->popularity = newPopularity;
+  strncpy(newBook->title, newTitle, sizeof(newBook->title) - 1);
+  newBook->title[sizeof(newBook->title) - 1] = '\0'; // Ensure null-termination
+  strncpy(newBook->author, newAuthor, sizeof(newBook->author) - 1);
+  newBook->author[sizeof(newBook->author) - 1] =
+      '\0'; // Ensure null-termination
+  newBook->year = newYear;
+  newBook->returnD[sizeof(newBook->title) - 1] = '\0';
+  strncpy(newBook->returnD, newReturnD, sizeof(newBook->author) - 1);
+
+  // Insert the new book at the front of the list
+  newBook->next = *headRef;
+  *headRef = newBook;
+
+  // Sort the list based on the given criteria
+  mergeSort(*headRef, criteria);
+
+  // Append the new book to the CSV file
+  FILE *file = fopen("./data.csv", "a");
+  if (file == NULL) {
+    printf("File did not open\n");
+    free(newBook);
+    return;
+  }
+  fprintf(file, "%d,%s,%s,%d,%s\n", newPopularity, newTitle, newAuthor, newYear,
+          newReturnD);
+  fclose(file);
+  return;
 }
 
 int main() {

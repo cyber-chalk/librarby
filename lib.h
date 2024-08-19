@@ -31,6 +31,9 @@ void viewReturnDate(book *head, const char *name);
 void issueDate(book *head, const char *name, const char *issueD);
 void clearReturnDate( book *head, const char *name);
 
+void deleteBook(book **headRef, char delTitle[], SortBy criteria)
+void addBook(book **headRef, int newPopularity, const char *newTitle, const char *newAuthor, int newYear, int newReturnD, int newAvailable, SortBy criteria);
+
 typedef struct searchList_ {
     book *thisBook;
     int distance;
