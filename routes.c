@@ -4,7 +4,14 @@
 void addAllRoutes(void *route) {
   // clang-format off
 addRoute(route, "/addicon.png", "./public/assets/addicon.png");
+addRoute(route, "/data.csv", "./public/data.csv");
+addRoute(route, "/data.csv?sort=popularity", "./public/data.csv");
+addRoute(route, "/data.csv?sort=title", "./public/data.csv");
+addRoute(route, "/data.csv?sort=author", "./public/data.csv");
+addRoute(route, "/data.csv?sort=year", "./public/data.csv");
+addRoute(route, "/data.csv?sort=return_date", "./public/data.csv");
 
+addRoute(route, "/fixedsys.ttf", "./public/assets/fixedsys-2-monospaced.ttf");
 addRoute(route, "/favicon.ico", "./public/assets/logo.png");
 addRoute(route, "/bar.png", "./public/assets/bar.png");
 addRoute(route, "/bookIcon.png", "./public/assets/bookIcon.png");

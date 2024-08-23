@@ -158,8 +158,8 @@ book *mergeSort(book *head, SortBy criteria) {
 void printList(book *head) {
   book *current = head;
   while (current != NULL) {
-    printf("%s\n", current->title);
-    printf("--------------------------\n");
+    printf("%d %s %s %d %s n", current->popularity, current->title,
+           current->author, current->year, current->returnD);
     current = current->next;
   }
 }
@@ -290,14 +290,16 @@ void freeBooks(book *head) {
   }
 }
 
-//view the return dates on books
+// view the return dates on books
 void viewReturnDate(book *head, const char *name) {
   while (head != NULL) {
     if (strcmp(head->title, name) == 0) {
       if (strcmp(head->returnD, "00-00-0001") != 0) {
         printf("the return date for %s is: %s\n", name, head->returnD);
       } else {
-        printf("'%s' does not have a return date. use 'issueDate' to issue a date to this book\n", name);
+        printf("'%s' does not have a return date. use 'issueDate' to issue a "
+               "date to this book\n",
+               name);
       }
       return;
     }
@@ -306,16 +308,18 @@ void viewReturnDate(book *head, const char *name) {
   printf("could not find a book with the title '%s'\n", name);
 }
 
-//issue a return date to a book
+// issue a return date to a book
 void issueDate(book *head, const char *name, const char *issueD) {
   while (head != NULL) {
-    if (strcmp(head->title, name) ==0) {
+    if (strcmp(head->title, name) == 0) {
       if (strcmp(head->returnD, "00-00-0001") == 0) {
         strcpy(head->returnD, issueD);
 
         printf("%s has been given the issue date of '%s'\n", name, issueD);
       } else {
-        printf("this book already has a return date, '%s'. use 'clearReturnDate' to clear it first\n", head->returnD);
+        printf("this book already has a return date, '%s'. use "
+               "'clearReturnDate' to clear it first\n",
+               head->returnD);
       }
       return;
     }
@@ -324,8 +328,8 @@ void issueDate(book *head, const char *name, const char *issueD) {
   printf("could not find a book with the title '%s'\n", name);
 }
 
-//clear previous return dates and set to default
-void clearReturnDate( book *head, const char *name) {
+// clear previous return dates and set to default
+void clearReturnDate(book *head, const char *name) {
   while (head != NULL) {
     if (strcmp(head->title, name) == 0) {
       strcpy(head->returnD, "00-00-0001");
@@ -336,49 +340,49 @@ void clearReturnDate( book *head, const char *name) {
   printf("could not find a book with the title '%s'\n", name);
 }
 
-int main() {
-  book *popularityH = readCSV("./data.csv");
-  if (popularityH == NULL) {
-    printf("fail");
-  }
-  // book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
-  // book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
-  // book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
-  // book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
+// int main() {
+//  book *popularityH = readCSV("./public/data.csv");
+//  if (popularityH == NULL) {
+//    printf("fail");
+//  }
+//  // book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
+//  // book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
+//  // book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
+//  // book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
 
-  // just use qsort to sort because im too lazy to modify the merge sort
+// // just use qsort to sort because im too lazy to modify the merge sort
 
-  // printList2(searchHelper("Gatsby", popularityH));
+// // printList2(searchHelper("Gatsby", popularityH));
 
-  searchList *filteredList = searchHelper("Gatsby", popularityH);
-  searchList **array;
-  int size = listToArray(filteredList, &array);
-  qsort(array, size, sizeof(searchList *), compareByDist);
-  for (int i = 0; i < size; i++) {
-    printf("Title: %s, Distance: %d\n", array[i]->thisBook->title,
-           array[i]->distance);
-  }
+// searchList *filteredList = searchHelper("Gatsby", popularityH);
+// searchList **array;
+// int size = listToArray(filteredList, &array);
+// qsort(array, size, sizeof(searchList *), compareByDist);
+// for (int i = 0; i < size; i++) {
+//   printf("Title: %s, Distance: %d\n", array[i]->thisBook->title,
+//          array[i]->distance);
+// }
 
-  // Free the allocated memory for the array
-  searchList *current = filteredList;
-  while (current != NULL) {
-    searchList *temp = current;
-    current = current->next;
-    free(temp);
-  }
-  free(array);
-  freeBooks(popularityH);
-  // char *str1 = "1984";
-  // char *str2 = "gatsby";
+// // Free the allocated memory for the array
+// searchList *current = filteredList;
+// while (current != NULL) {
+//   searchList *temp = current;
+//   current = current->next;
+//   free(temp);
+// }
+// free(array);
+// freeBooks(popularityH);
+// char *str1 = "1984";
+// char *str2 = "gatsby";
 
-  // int distance = levenshtein(str1, str2);
-  // printf("\nLevenshtein distance between '%s' and '%s' is %d\n", str1, str2,
-  //        distance);
+// int distance = levenshtein(str1, str2);
+// printf("\nLevenshtein distance between '%s' and '%s' is %d\n", str1, str2,
+//        distance);
 
-  // On front-end disconnection make sure to free
-  // Also! may need to move the code above this to main.c
-  // printList(yearH);
-  // printList(readCSV("./data.csv"));
+// On front-end disconnection make sure to free
+// Also! may need to move the code above this to main.c
+// printList(yearH);
+// printList(readCSV("./data.csv"));
 
-  return 0;
-}
+// return 0;
+//}

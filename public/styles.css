@@ -1,7 +1,12 @@
+@font-face {
+    font-family: "lefont";
+    src: url('/fixedsys.ttf');
+}
+
 body {
     height: 100vh;
     margin: 0 0;
-    font-family: "Open sans";
+    font-family: "lefont", monospace;
     color: blue;
 }
 
@@ -79,13 +84,13 @@ input:focus-visible {
     /* align-items: center; */
     padding: 0 16px;
     grid-gap: 16px;
-    background-color: #fff8fb;
-    /* background: rgba(255, 255, 255, 0.977); */
+    /* background-color: #fff8fb; */
+    background: rgba(255, 255, 255, 0.551);
     border-radius: 16px;
-    /* box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); */
-    /* backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px); */
-    color: #392426;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: #6c6c6c;
 }
 
 .book-item {
@@ -98,9 +103,7 @@ input:focus-visible {
     border: none;
 }
 
-.book-item img {
-    visibility: hidden;
-}
+/* .book-item img {} */
 
 .condition {
     display: flex;
@@ -109,6 +112,8 @@ input:focus-visible {
 
 .condition img {
     width: 2.5em;
+    transition: visibility 0s, opacity 0.5s ease-in-out;
+    visibility: hidden;
 }
 
 .head {
@@ -117,5 +122,14 @@ input:focus-visible {
 
 .head img {
     visibility: hidden;
-    height: 1px;
+    height: 0px;
+}
+
+/* drop down */
+#drop-down {
+    margin-left: auto;
+}
+
+#drop-down img {
+    width: 3vw;
 }

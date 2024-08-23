@@ -1,4 +1,5 @@
 #include "./webserver.h"
+#include "./lib.h"
 #include "./routes.h"
 #include <fcntl.h>
 #include <netinet/in.h>
@@ -81,22 +82,36 @@ void freeRoutes(struct Route *root) {
 char *mimes(char *ext) {
 
   // clang-format off
-    if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) { return "text/html"; }
-    if (strcmp(ext, "jpeg") == 0 || strcmp(ext, "jpg") == 0) { return "image/jpg"; }
-    if (strcmp(ext, "css") == 0) { return "text/css"; }
-    if (strcmp(ext, "ico") == 0) { return "image/png"; }
-    if (strcmp(ext, "js") == 0) { return "application/javascript"; }
-    if (strcmp(ext, "json") == 0) { return "application/json"; }
-    if (strcmp(ext, "txt") == 0) { return "text/plain"; }
-    if (strcmp(ext, "gif") == 0) { return "image/gif"; }
-    if (strcmp(ext, "png") == 0) { return "image/png"; }
+    if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) return "text/html";
+    if (strcmp(ext, "jpeg") == 0 || strcmp(ext, "jpg") == 0) return "image/jpg";
+    if (strcmp(ext, "css") == 0) return "text/css";
+    if (strcmp(ext, "csv") == 0) return "text/plain";
+    if (strcmp(ext, "ttf") == 0) return "font/tts"; 
+    if (strcmp(ext, "ico") == 0) return "image/png"; 
+    if (strcmp(ext, "js") == 0) return "application/javascript";
+    if (strcmp(ext, "json") == 0) return "application/json"; 
+    if (strcmp(ext, "txt") == 0) return "text/plain"; 
+    if (strcmp(ext, "gif") == 0) return "image/gif"; 
+    if (strcmp(ext, "png") == 0) return "image/png"; 
   printf("\n missed mimes"); 
   return "text/plain";
   // clang-format on
 }
 
+SortBy queryToEnum(char *query) {
+  // clang-format off
+  if (strcmp(query, "popularity") == 0) return SORT_BY_POPULARITY;
+  if (strcmp(query, "title") == 0) return SORT_BY_TITLE;
+  if (strcmp(query, "author") == 0) return SORT_BY_AUTHOR;
+  if (strcmp(query, "year") == 0) return SORT_BY_YEAR;
+  if (strcmp(query, "return_date") == 0) return SORT_BY_RETURN_DATE;
+  // clang-format on
+  printf("\nmissed enum");
+  return SORT_BY_POPULARITY;
+}
+
 char *headerBuilder(char *ext, int b404, char *header, int size) {
-  if (b404 == 2) {
+  if (b404 == 1) {
     snprintf(header, size,
              "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n");
   } else {
@@ -182,32 +197,29 @@ int main() {
       fileType = dot + 1;
     }
 
+    char *param = NULL;
     char *query = NULL;
-    if (strtok(NULL, "="))
+    if (questionMark) {
+      param = strtok(NULL, "=");
       query = strtok(NULL, " ");
-    // get popularity, whats after the = and before its next space
+      // get popularity, whats after the = and before its next space
+    }
 
     if (strcmp(urlRoute, "/") == 0)
       fileType = "html";
-    printf("\nMethod + Route + Type + Query:%s.%s.%s.%s.\n", method, urlRoute,
-           fileType, query);
+    printf("\nMethod + Route + Type + Param + Query:%s.%s.%s.%s.%s.\n", method,
+           urlRoute, fileType, param, query);
 
+    /* GET */
     if (strcmp(method, "GET") == 0) {
+      book *popularityH = readCSV("./public/data.csv");
       int notFound = 0;
 
-      if (query) {
-        // get data.csv sorted accordingly
-      }
       struct Route *dest = search(route, urlRoute);
       if (dest == NULL)
         notFound = 1;
 
       char *filePath;
-      if (notFound == 1 && fileType != NULL && strcmp(fileType, "html") == 0) {
-        filePath = "./public/404.html";
-        printf("======404=======");
-        notFound = 2;
-      }
       if (notFound == 1) {
         send(client, header404, strlen(header404), 0);
         send(client, errorPage, strlen(errorPage), 0);
@@ -215,16 +227,13 @@ int main() {
         close(client);
         continue;
       }
-      if (notFound != 2) {
-        filePath = dest->value;
-      }
+      filePath = dest->value;
       printf("filePath: %s\n", filePath);
 
       FILE *fp = fopen(filePath, "r");
       fseek(fp, 0L, SEEK_END);
       size_t size = ftell(fp);
       fclose(fp);
-      // printf(" size:%d ", (int)size);
 
       char template[128];
       char *header = headerBuilder(fileType, notFound, template, 128);
@@ -240,6 +249,46 @@ int main() {
       //        size, get_file_size(opened_fd));
 
       send(client, header, strlen(header), 0);
+
+      if (query) {
+        SortBy sort = queryToEnum(query);
+        book *titleH = mergeSort(copyList(popularityH), sort);
+        book *t = titleH;
+        // size_t linesize = (sizeof(int) * 2) + 305;
+        size_t totalsize = 0;
+        while (t != NULL) {
+          int len = snprintf(NULL, 0, "%d %s %s %d %s", t->popularity, t->title,
+                             t->author, t->year, t->returnD);
+          totalsize += len;
+          t = t->next;
+        }
+
+        char *str = malloc(totalsize + 1);
+        char *ptr = str;
+        t = titleH;
+        while (t != NULL) {
+          int linesize = snprintf(NULL, 0, "%d %s %s %d %s", t->popularity,
+                                  t->title, t->author, t->year, t->returnD);
+
+          int len =
+              snprintf(ptr, totalsize + 1, "%d %s %s %d %s", t->popularity,
+                       t->title, t->author, t->year, t->returnD);
+          ptr += len;
+          // totalsize += len;
+          t = t->next;
+        }
+        *ptr = '\0';
+        // printf("%s", str);
+        setsockopt(client, IPPROTO_TCP, TCP_CORK, &off, sizeof(off));
+        send(client, str, totalsize, 0);
+        close(opened_fd);
+        free(str);
+        freeBooks(popularityH);
+        freeBooks(titleH);
+        close(client);
+        continue;
+      }
+
       // send(client, loadFileToString(filePath), size, 0);
       while (offset < size) {
         ssize_t current_bytes =
@@ -250,24 +299,20 @@ int main() {
           break;
         }
         sent_bytes += current_bytes;
-        //       offset -= sent_bytes;
       }
       printf("Offset Sent, Size: %ld, %ld, %ld\n", offset, sent_bytes, size);
-      if (sent_bytes < size) {
-        fprintf(stderr, "Error: Only %ld of %ld bytes sent\n", sent_bytes,
-                size);
+      if (sent_bytes < size)
         perror("Incomplete sendfile transmission");
-      }
       setsockopt(client, IPPROTO_TCP, TCP_CORK, &off, sizeof(off));
       // setsockopt(client, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
       //   sendfile(client, opened_fd, 0, size);
       close(opened_fd);
+      freeBooks(popularityH);
       close(client);
     } else if (strcmp(method, "POST") == 0) {
-      // write to csv
-      // if its a search, just return a string through websockers
     }
   }
+  // untouched code
   freeRoutes(route);
   close(server_socket);
   return 0;
