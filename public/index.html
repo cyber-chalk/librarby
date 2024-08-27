@@ -20,20 +20,25 @@
 	</head>
 	<body>
 		<div id="banner">
-			<img src="logo.png" id="logo" alt="librarby" defer />
-			<img src="searchBarTag.png" id="search-block" alt="search" defer />
-			<img src="searchBar.png" id="search-icon" alt="" defer />
+			<img src="logo.png" id="logo" alt="librarby" />
+			<img src="searchBarTag.png" id="search-block" alt="search" />
+			<img
+				src="searchBar.png"
+				id="search-icon"
+				alt=""
+				onclick="writeList(this.nextElementSibling.value, 'search')"
+			/>
 			<input type="text" placeHolder="Search..." />
 		</div>
 
 		<div id="drop-down">
-			<img src="hamburger.png" alt="" />
+			<img src="menu.png" id="drop-img" alt="" />
 			<div class="drop-content">
-				<a onclick="writeList(this.innerText)">Popularity</a>
-				<a onclick="writeList(this.innerText)">Title</a>
-				<a onclick="writeList(this.innerText)">Author</a>
-				<a onclick="writeList(this.innerText)">Year</a>
-				<a onclick="writeList(this.innerText)">Return</a>
+				<a onclick="writeList(this.innerText, 'sort')">Popularity</a>
+				<a onclick="writeList(this.innerText, 'sort')">Title</a>
+				<a onclick="writeList(this.innerText, 'sort')">Author</a>
+				<a onclick="writeList(this.innerText, 'sort')">Year</a>
+				<a onclick="writeList(this.innerText, 'sort')">Return</a>
 			</div>
 		</div>
 		<div id="book-container">

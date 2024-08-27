@@ -250,15 +250,27 @@ int main() {
 
       send(client, header, strlen(header), 0);
 
-      if (query) {
-        SortBy sort = queryToEnum(query);
-        book *titleH = mergeSort(copyList(popularityH), sort);
-        book *t = titleH;
+      if (param) {
+        searchList *filteredList;
+        book *titleH;
+        book *t;
+        if (strcmp(param, "sort") == 0) {
+          SortBy sort = queryToEnum(query);
+          titleH = mergeSort(copyList(popularityH), sort);
+          t = titleH;
+        } else {
+          filteredList = searchHelper("Gatsby", popularityH);
+          searchList **array;
+          int size = listToArray(filteredList, &array);
+          qsort(array, size, sizeof(searchList *), compareByDist);
+          titleH = filteredList->thisBook;
+          t = titleH;
+        }
         // size_t linesize = (sizeof(int) * 2) + 305;
         size_t totalsize = 0;
         while (t != NULL) {
-          int len = snprintf(NULL, 0, "%d, %s, %s, %d, %s", t->popularity, t->title,
-                             t->author, t->year, t->returnD);
+          int len = snprintf(NULL, 0, "%d, %s, %s, %d, %s", t->popularity,
+                             t->title, t->author, t->year, t->returnD);
           totalsize += len;
           t = t->next;
         }
@@ -284,7 +296,16 @@ int main() {
         close(opened_fd);
         free(str);
         freeBooks(popularityH);
-        freeBooks(titleH);
+        if (strcmp(param, "search") == 0) {
+          searchList *current = filteredList;
+          while (current != NULL) {
+            searchList *temp = current;
+            current = current->next;
+            free(temp);
+          }
+        } else {
+          freeBooks(titleH);
+        }
         close(client);
         continue;
       }

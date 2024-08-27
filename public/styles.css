@@ -140,7 +140,7 @@ input:focus-visible {
 
 /* drop down */
 #drop-down {
-    margin-left: auto;
+    margin-left: 5%;
     position: relative;
     display: flex;
 }
