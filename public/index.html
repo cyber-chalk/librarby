@@ -1,12 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<link
+			rel="icon"
+			href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
+			defer
+		/>
+		<script src="index.js" defer></script>
 		<link rel="stylesheet" href="styles.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+			rel="stylesheet"
+		/>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
 	</head>
 	<body>
-		working now!!!
+		<div id="banner">
+			<img src="logo.png" id="logo" alt="librarby" />
+			<img src="searchBarTag.png" id="search-block" alt="search" />
+			<img
+				src="searchBar.png"
+				id="search-icon"
+				alt=""
+				onclick="writeList(this.nextElementSibling.value, 'search')"
+			/>
+			<input type="text" placeHolder="Search..." />
+		</div>
+
+		<div id="drop-down">
+			<img src="menu.png" id="drop-img" alt="" />
+			<div class="drop-content">
+				<a onclick="writeList(this.innerText, 'sort')">Popularity</a>
+				<a onclick="writeList(this.innerText, 'sort')">Title</a>
+				<a onclick="writeList(this.innerText, 'sort')">Author</a>
+				<a onclick="writeList(this.innerText, 'sort')">Year</a>
+				<a onclick="writeList(this.innerText, 'sort')">Return</a>
+			</div>
+		</div>
+		<div id="book-container">
+			<div class="book-item head">Popularity</div>
+			<div class="book-item head">Title</div>
+			<div class="book-item head">Author</div>
+			<div class="book-item head">Year</div>
+			<div class="book-item condition head">
+				<img src="borrowIcon.png" alt="" /><img
+					src="returnIcon.png"
+				/>condition<img src="remove.png" alt="" />
+			</div>
+
+			<!-- Book Rows -->
+			<div class="book-item">5</div>
+			<div class="book-item">The Great Gatsby</div>
+			<div class="book-item">F. Scott Fitzgerald</div>
+			<div class="book-item">1925</div>
+			<div class="book-item condition">
+				<img src="borrowIcon.png" alt="" /><img
+					src="returnIcon.png"
+				/>2023-12-01<img src="remove.png" alt="" />
+			</div>
+
+			<div class="book-item">3</div>
+			<div class="book-item">1984</div>
+			<div class="book-item">George Orwell</div>
+			<div class="book-item">1949</div>
+			<div class="book-item condition">
+				<img src="borrowIcon.png" alt="" /><img
+					src="returnIcon.png"
+				/>2024-01-15<img src="remove.png" alt="" />
+			</div>
+		</div>
 	</body>
 </html>

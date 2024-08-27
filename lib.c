@@ -182,8 +182,8 @@ book *mergeSort(book *head, SortBy criteria) {
 void printList(book *head) {
   book *current = head;
   while (current != NULL) {
-    printf("%s\n", current->title);
-    printf("--------------------------\n");
+    printf("%d %s %s %d %s n", current->popularity, current->title,
+           current->author, current->year, current->returnD);
     current = current->next;
   }
 }
@@ -364,6 +364,54 @@ void clearReturnDate(book *head, const char *name) {
   printf("could not find a book with the title '%s'\n", name);
 }
 
+
+// int main() {
+//  book *popularityH = readCSV("./public/data.csv");
+//  if (popularityH == NULL) {
+//    printf("fail");
+//  }
+//  // book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
+//  // book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
+//  // book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
+//  // book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
+
+// // just use qsort to sort because im too lazy to modify the merge sort
+
+// // printList2(searchHelper("Gatsby", popularityH));
+
+// searchList *filteredList = searchHelper("Gatsby", popularityH);
+// searchList **array;
+// int size = listToArray(filteredList, &array);
+// qsort(array, size, sizeof(searchList *), compareByDist);
+// for (int i = 0; i < size; i++) {
+//   printf("Title: %s, Distance: %d\n", array[i]->thisBook->title,
+//          array[i]->distance);
+// }
+
+// // Free the allocated memory for the array
+// searchList *current = filteredList;
+// while (current != NULL) {
+//   searchList *temp = current;
+//   current = current->next;
+//   free(temp);
+// }
+// free(array);
+// freeBooks(popularityH);
+// char *str1 = "1984";
+// char *str2 = "gatsby";
+
+// int distance = levenshtein(str1, str2);
+// printf("\nLevenshtein distance between '%s' and '%s' is %d\n", str1, str2,
+//        distance);
+
+// On front-end disconnection make sure to free
+// Also! may need to move the code above this to main.c
+// printList(yearH);
+// printList(readCSV("./data.csv"));
+
+// return 0;
+//}
+
 // Tom's code
 // Must call multipule times if multipule lists need to be updated
 void deleteBook(book **headRef, char delTitle[], SortBy criteria) {
@@ -439,49 +487,4 @@ void addBook(book **headRef, int newPopularity, const char *newTitle,
   return;
 }
 
-int main() {
-  book *popularityH = readCSV("./data.csv");
-  if (popularityH == NULL) {
-    printf("fail");
-  }
-  // book *titleH = mergeSort(copyList(popularityH), SORT_BY_TITLE);
-  // book *authorH = mergeSort(copyList(popularityH), SORT_BY_AUTHOR);
-  // book *yearH = mergeSort(copyList(popularityH), SORT_BY_YEAR);
-  // book *returnH = mergeSort(copyList(popularityH), SORT_BY_RETURN_DATE);
 
-  // just use qsort to sort because im too lazy to modify the merge sort
-
-  // printList2(searchHelper("Gatsby", popularityH));
-
-  searchList *filteredList = searchHelper("Gatsby", popularityH);
-  searchList **array;
-  int size = listToArray(filteredList, &array);
-  qsort(array, size, sizeof(searchList *), compareByDist);
-  for (int i = 0; i < size; i++) {
-    printf("Title: %s, Distance: %d\n", array[i]->thisBook->title,
-           array[i]->distance);
-  }
-
-  // Free the allocated memory for the array
-  searchList *current = filteredList;
-  while (current != NULL) {
-    searchList *temp = current;
-    current = current->next;
-    free(temp);
-  }
-  free(array);
-  freeBooks(popularityH);
-  // char *str1 = "1984";
-  // char *str2 = "gatsby";
-
-  // int distance = levenshtein(str1, str2);
-  // printf("\nLevenshtein distance between '%s' and '%s' is %d\n", str1, str2,
-  //        distance);
-
-  // On front-end disconnection make sure to free
-  // Also! may need to move the code above this to main.c
-  // printList(yearH);
-  // printList(readCSV("./data.csv"));
-
-  return 0;
-}
