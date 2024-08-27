@@ -34,10 +34,12 @@ function yuck() {
 }
 
 function writeList(param) {
+	param = param.toLowerCase();
+	if (param == "return") param = "return_date";
 	fetch(`data.csv?sort=${param}`)
 		.then((response) => response.text())
 		.then((data) => {
-			console.log(data.toString());
+			// console.log(data.toString());
 			let rows = data.split("\n");
 			let pRows = rows.map((element) => {
 				return element.split(",");
@@ -51,7 +53,7 @@ function writeList(param) {
 
 			// add (i know i could simplify this but i wont)
 			for (let i = 0; i < pRows.length; i++) {
-				console.log(pRows[i]);
+				// console.log(pRows[i]);
 				for (let j = 0; j < pRows[i].length; j++) {
 					let container = document.getElementById("book-container");
 					let el = document.createElement("div");
