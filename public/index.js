@@ -1,32 +1,77 @@
+function yuck() {
+	let rows = document.getElementsByClassName("book-item");
+	let grid = document.getElementById("book-container");
+
+	Array.from(rows).forEach((element, i) => {
+		element.addEventListener("mouseover", () => {
+			let row = Math.floor(i / 5);
+
+			for (let n = 0; n < rows.length; n++) {
+				if (Math.floor(n / 5) === row) {
+					Array.from(rows[n].getElementsByTagName("img")).forEach(
+						(img) => {
+							img.style.visibility = "visible";
+						}
+					);
+				} // yuck
+			}
+		});
+
+		element.addEventListener("mouseout", () => {
+			let row = Math.floor(i / 5);
+
+			for (let n = 0; n < rows.length; n++) {
+				if (Math.floor(n / 5) === row) {
+					Array.from(rows[n].getElementsByTagName("img")).forEach(
+						(img) => {
+							img.style.visibility = "hidden";
+						}
+					);
+				}
+			}
+		});
+	});
+}
+
 function writeList(param) {
 	fetch(`data.csv?sort=${param}`)
 		.then((response) => response.text())
 		.then((data) => {
-			rows = data.split("\n");
-			values = rows.split(" "); // might not split since 2d
+			console.log(data.toString());
+			let rows = data.split("\n");
+			let pRows = rows.map((element) => {
+				return element.split(",");
+			});
+			// console.log(pRows);
 			// clear list
-			items = document.querySelectorAll(".book-item:not(.head)");
+			let items = document.querySelectorAll(".book-item:not(.head)");
 			items.forEach((element) => {
 				element.remove();
 			});
+
 			// add (i know i could simplify this but i wont)
-			for (let i = 0; i < rows.length; i++) {
-				for (let j = 0; j < values.length; j++) {
+			for (let i = 0; i < pRows.length; i++) {
+				console.log(pRows[i]);
+				for (let j = 0; j < pRows[i].length; j++) {
 					let container = document.getElementById("book-container");
 					let el = document.createElement("div");
 
 					el.classList.add("book-item");
 
 					container.append(el);
-					if (j == values.length - 1) {
+					if (j == pRows[i].length - 1) {
 						el.classList.add("condition");
-						document.createElement("img").src = "borrowIcon.png";
-						el.innerText = values[j];
-						document.createElement("img").src = "remove.png";
+						el.innerHTML = `
+    					<img src="borrowIcon.png" alt="Borrow Icon" />
+   						<img src="returnIcon.png" alt="Return Icon" />
+    					${pRows[i][j]}
+   						<img src="remove.png" alt="Remove Icon" />`;
+					} else {
+						el.innerText = pRows[i][j];
 					}
-					el.innerText = values[j];
 				}
 			}
+			yuck();
 		})
 		.catch((error) => {
 			console.error("error fetching:", error);
@@ -34,36 +79,3 @@ function writeList(param) {
 }
 
 writeList("popularity");
-
-let rows = document.getElementsByClassName("book-item");
-let grid = document.getElementById("book-container");
-
-Array.from(rows).forEach((element, i) => {
-	element.addEventListener("mouseover", () => {
-		let row = Math.floor(i / 5);
-
-		for (let n = 0; n < rows.length; n++) {
-			if (Math.floor(n / 5) === row) {
-				Array.from(rows[n].getElementsByTagName("img")).forEach(
-					(img) => {
-						img.style.visibility = "visible";
-					}
-				);
-			} // yuck
-		}
-	});
-
-	element.addEventListener("mouseout", () => {
-		let row = Math.floor(i / 5);
-
-		for (let n = 0; n < rows.length; n++) {
-			if (Math.floor(n / 5) === row) {
-				Array.from(rows[n].getElementsByTagName("img")).forEach(
-					(img) => {
-						img.style.visibility = "hidden";
-					}
-				);
-			}
-		}
-	});
-});

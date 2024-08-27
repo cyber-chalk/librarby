@@ -257,7 +257,7 @@ int main() {
         // size_t linesize = (sizeof(int) * 2) + 305;
         size_t totalsize = 0;
         while (t != NULL) {
-          int len = snprintf(NULL, 0, "%d %s %s %d %s", t->popularity, t->title,
+          int len = snprintf(NULL, 0, "%d, %s, %s, %d, %s", t->popularity, t->title,
                              t->author, t->year, t->returnD);
           totalsize += len;
           t = t->next;
@@ -267,11 +267,11 @@ int main() {
         char *ptr = str;
         t = titleH;
         while (t != NULL) {
-          int linesize = snprintf(NULL, 0, "%d %s %s %d %s", t->popularity,
+          int linesize = snprintf(NULL, 0, "%d, %s, %s, %d, %s", t->popularity,
                                   t->title, t->author, t->year, t->returnD);
 
           int len =
-              snprintf(ptr, totalsize + 1, "%d %s %s %d %s", t->popularity,
+              snprintf(ptr, totalsize + 1, "%d, %s, %s, %d, %s", t->popularity,
                        t->title, t->author, t->year, t->returnD);
           ptr += len;
           // totalsize += len;
