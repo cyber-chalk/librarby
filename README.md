@@ -1,5 +1,6 @@
-# Librarby - Simple library managment system
+# Librarby - Simple library managment system (Archived)
 A library management system for the Snowdin "Librarby", featuring book tracking, due dates and inventory management.
+Archived because we are done with the project and I dont like it
 
 <strong> school project and not an actual library! </strong> </br> </br>
 ![image](https://github.com/user-attachments/assets/72eadc90-399b-4306-8950-8f5c7396f9f5) </br>
